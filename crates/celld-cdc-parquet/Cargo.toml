@@ -1,0 +1,17 @@
+[package]
+name = "celld-cdc-parquet"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "The celld-cdc change-log format: ChangeEvents as Parquet."
+
+[dependencies]
+celld-cdc-core = { path = "../celld-cdc-core" }
+# Must match the arrow/parquet major that `deltalake` uses (59 for deltalake
+# 1.1), so the materializer can pass RecordBatches straight through.
+arrow = { version = "59", default-features = false }
+arrow-schema = { version = "59", features = ["canonical_extension_types"] }
+parquet = { version = "59", default-features = false, features = ["arrow", "zstd", "arrow_canonical_extension_types"] }
+serde_json.workspace = true
+anyhow.workspace = true
+bytes.workspace = true

@@ -1,0 +1,20 @@
+[package]
+name = "celld-cdc-materialize"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Materialize celld change events into SCD1/SCD2 Delta Lake tables."
+
+[dependencies]
+celld-cdc-core = { path = "../celld-cdc-core" }
+celld-cdc-parquet = { path = "../celld-cdc-parquet" }
+deltalake = { version = "1.1", features = ["s3", "datafusion"] }
+tokio.workspace = true
+bytes.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true

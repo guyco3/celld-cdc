@@ -1,0 +1,25 @@
+[package]
+name = "celld-cdc-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Decode celld LTX segments into row-level change events."
+
+[dependencies]
+celld-ltx.workspace = true
+rusqlite.workspace = true
+object_store = { workspace = true, features = ["fs"] }
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+base64.workspace = true
+sha2.workspace = true
+hex.workspace = true
+bytes.workspace = true
+async-trait.workspace = true
+percent-encoding.workspace = true
+tempfile.workspace = true
+futures-util = "0.3"

@@ -1,0 +1,436 @@
+[
+ {
+  "name": "undefined",
+  "hex": "ff0f5f",
+  "expected": null
+ },
+ {
+  "name": "null",
+  "hex": "ff0f30",
+  "expected": null
+ },
+ {
+  "name": "true",
+  "hex": "ff0f54",
+  "expected": true
+ },
+ {
+  "name": "false",
+  "hex": "ff0f46",
+  "expected": false
+ },
+ {
+  "name": "zero",
+  "hex": "ff0f4900",
+  "expected": 0
+ },
+ {
+  "name": "int",
+  "hex": "ff0f4954",
+  "expected": 42
+ },
+ {
+  "name": "negint",
+  "hex": "ff0f490d",
+  "expected": -7
+ },
+ {
+  "name": "int32max",
+  "hex": "ff0f49feffffff0f",
+  "expected": 2147483647
+ },
+ {
+  "name": "int32min",
+  "hex": "ff0f49ffffffff0f",
+  "expected": -2147483648
+ },
+ {
+  "name": "beyond_int32",
+  "hex": "ff0f4e0000000000007042",
+  "expected": 1099511627776
+ },
+ {
+  "name": "maxsafe",
+  "hex": "ff0f4effffffffffff3f43",
+  "expected": 9007199254740991
+ },
+ {
+  "name": "float",
+  "hex": "ff0f4e0000000000000a40",
+  "expected": 3.25
+ },
+ {
+  "name": "negfloat",
+  "hex": "ff0f4e9a9999999999b9bf",
+  "expected": -0.1
+ },
+ {
+  "name": "nan",
+  "hex": "ff0f4e000000000000f87f",
+  "expected": {
+   "$double": "NaN"
+  }
+ },
+ {
+  "name": "inf",
+  "hex": "ff0f4e000000000000f07f",
+  "expected": {
+   "$double": "Infinity"
+  }
+ },
+ {
+  "name": "neginf",
+  "hex": "ff0f4e000000000000f0ff",
+  "expected": {
+   "$double": "-Infinity"
+  }
+ },
+ {
+  "name": "bigint",
+  "hex": "ff0f5a107b00000000000000",
+  "expected": {
+   "$bigint": "123"
+  }
+ },
+ {
+  "name": "bigint_neg",
+  "hex": "ff0f5a2100000000000000000000000010000000",
+  "expected": {
+   "$bigint": "-1267650600228229401496703205376"
+  }
+ },
+ {
+  "name": "bigint_zero",
+  "hex": "ff0f5a00",
+  "expected": {
+   "$bigint": "0"
+  }
+ },
+ {
+  "name": "empty_string",
+  "hex": "ff0f2200",
+  "expected": ""
+ },
+ {
+  "name": "ascii",
+  "hex": "ff0f220568656c6c6f",
+  "expected": "hello"
+ },
+ {
+  "name": "latin1",
+  "hex": "ff0f2206636166e920ff",
+  "expected": "café ÿ"
+ },
+ {
+  "name": "emoji",
+  "hex": "ff0f630e6800690020003dd800de20002d4e",
+  "expected": "hi 😀 中"
+ },
+ {
+  "name": "object",
+  "hex": "ff0f6f2201614902220162220374776f220163410254302400027b03",
+  "expected": {
+   "a": 1,
+   "b": "two",
+   "c": [
+    true,
+    null
+   ]
+  }
+ },
+ {
+  "name": "numeric_keys",
+  "hex": "ff0f6f49022201612203322e3522016222017849067b03",
+  "expected": {
+   "1": "a",
+   "2.5": "b",
+   "x": 3
+  }
+ },
+ {
+  "name": "nested",
+  "hex": "ff0f6f2201616f2201626f2201634102490241024904410149062400012400022400027b017b017b01",
+  "expected": {
+   "a": {
+    "b": {
+     "c": [
+      1,
+      [
+       2,
+       [
+        3
+       ]
+      ]
+     ]
+    }
+   }
+  }
+ },
+ {
+  "name": "undefined_prop",
+  "hex": "ff0f6f2201755f7b01",
+  "expected": {
+   "u": null
+  }
+ },
+ {
+  "name": "array",
+  "hex": "ff0f410349022201616f22017a49007b01240003",
+  "expected": [
+   1,
+   "a",
+   {
+    "z": 0
+   }
+  ]
+ },
+ {
+  "name": "empty_array",
+  "hex": "ff0f4100240000",
+  "expected": []
+ },
+ {
+  "name": "empty_object",
+  "hex": "ff0f6f7b00",
+  "expected": {}
+ },
+ {
+  "name": "holey_array",
+  "hex": "ff0f61034900490249044906400203",
+  "expected": [
+   1,
+   null,
+   3
+  ]
+ },
+ {
+  "name": "sparse_array",
+  "hex": "ff0f610b49004902491422017840020b",
+  "expected": [
+   1,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   null,
+   "x"
+  ]
+ },
+ {
+  "name": "array_extra_prop",
+  "hex": "ff0f610449064902220565787472614904400204",
+  "expected": [
+   null,
+   null,
+   null,
+   1
+  ]
+ },
+ {
+  "name": "map",
+  "hex": "ff0f3b220161490249046f220162547b013a04",
+  "expected": {
+   "$map": [
+    [
+     "a",
+     1
+    ],
+    [
+     2,
+     {
+      "b": true
+     }
+    ]
+   ]
+  }
+ },
+ {
+  "name": "set",
+  "hex": "ff0f274902220374776f302c03",
+  "expected": {
+   "$set": [
+    1,
+    "two",
+    null
+   ]
+  }
+ },
+ {
+  "name": "date",
+  "hex": "ff0f4400b08756febc7842",
+  "expected": {
+   "$date": 1700000000123
+  }
+ },
+ {
+  "name": "invalid_date",
+  "hex": "ff0f44000000000000f87f",
+  "expected": {
+   "$date": {
+    "$double": "NaN"
+   }
+  }
+ },
+ {
+  "name": "repeated_refs",
+  "hex": "ff0f6f2201786f22016b49027b0122017941025e015e012400027b02",
+  "expected": {
+   "x": {
+    "k": 1
+   },
+   "y": [
+    {
+     "k": 1
+    },
+    {
+     "k": 1
+    }
+   ]
+  }
+ },
+ {
+  "name": "string_object",
+  "hex": "ff0f73220173",
+  "expected": "s"
+ },
+ {
+  "name": "number_object",
+  "hex": "ff0f6e0000000000001440",
+  "expected": 5
+ },
+ {
+  "name": "boolean_object",
+  "hex": "ff0f78",
+  "expected": false
+ },
+ {
+  "name": "bigint_object",
+  "hex": "ff0f7a100500000000000000",
+  "expected": {
+   "$bigint": "5"
+  }
+ },
+ {
+  "name": "regexp",
+  "hex": "ff0f522203612b6203",
+  "expected": {
+   "$regexp": {
+    "source": "a+b",
+    "flags": "gi"
+   }
+  }
+ },
+ {
+  "name": "arraybuffer",
+  "hex": "ff0f420409080706",
+  "expected": {
+   "$bytes": "CQgHBg=="
+  }
+ },
+ {
+  "name": "uint8array",
+  "hex": "ff0f42030102035642000300",
+  "expected": {
+   "$bytes": "AQID"
+  }
+ },
+ {
+  "name": "subarray_view",
+  "hex": "ff0f420500010203045642010200",
+  "expected": {
+   "$bytes": "AQI="
+  }
+ },
+ {
+  "name": "float64array",
+  "hex": "ff0f4208000000000000f83f5646000800",
+  "expected": {
+   "$bytes": "AAAAAAAA+D8="
+  }
+ },
+ {
+  "name": "dataview",
+  "hex": "ff0f42020506563f000200",
+  "expected": {
+   "$bytes": "BQY="
+  }
+ },
+ {
+  "name": "shared_buffer_views",
+  "hex": "ff0f410242040000000056420002005e015642020200240002",
+  "expected": [
+   {
+    "$bytes": "AAA="
+   },
+   {
+    "$bytes": "AAA="
+   }
+  ]
+ },
+ {
+  "name": "error",
+  "hex": "ff0f72526d220362616473220373746b2e",
+  "expected": {
+   "$error": {
+    "name": "RangeError",
+    "message": "bad",
+    "stack": "stk"
+   }
+  }
+ },
+ {
+  "name": "mixed",
+  "hex": "ff0f6f22046c697374410349022201e963043dd800de24000322016d3b5a100100000000000000274400000000000000002c013a027b02",
+  "expected": {
+   "list": [
+    1,
+    "é",
+    "😀"
+   ],
+   "m": {
+    "$map": [
+     [
+      {
+       "$bigint": "1"
+      },
+      {
+       "$set": [
+        {
+         "$date": 0
+        }
+       ]
+      }
+     ]
+    ]
+   }
+  }
+ },
+ {
+  "name": "object_v16",
+  "hex": "ff106f2201614902220162220374776f220163410254302400027b03",
+  "expected": {
+   "a": 1,
+   "b": "two",
+   "c": [
+    true,
+    null
+   ]
+  }
+ },
+ {
+  "name": "emoji_v16",
+  "hex": "ff10630e6800690020003dd800de20002d4e",
+  "expected": "hi 😀 中"
+ },
+ {
+  "name": "uint8array_v16",
+  "hex": "ff1042030102035642000300",
+  "expected": {
+   "$bytes": "AQID"
+  }
+ }
+]
