@@ -28,7 +28,7 @@ build on; **D** are properties this design maintains.
 | I9 | **S3 Inventory** periodically (daily) delivers a listing of every object in the bucket at that time. | S3 |
 | I10 | **Decoding is deterministic**: the same segment over the same before-state gives the same events, and `event_id = H(scope, epoch, txid, table, pk)`. | celld-cdc |
 | I11 | **SCD merges are idempotent and order-independent**: SCD1 keeps the greatest `seq` per key, SCD2 recomputes validity for touched keys. | celld-cdc (v1, unchanged) |
-| I12 | **A Delta commit is atomic and can carry application transactions** (`appId → version`), read back with the table state. | Delta protocol (`txn` action) |
+| I12 | **A Delta commit is atomic and can carry application transactions** (`appId → version`), read back with the table state. | Delta protocol (`txn` action); delta-rs 1.1: `CommitProperties::with_application_transactions`, `DeltaTableState::transaction_version` |
 | D1 | **The group count G is immutable.** It's in `config.json`, created once with `If-None-Match` and never rewritten; workers take G only from there. So each actor belongs to exactly one group. | I3 |
 | D2 | **Each group's log is gapless and has one entry per `seq`.** Entry `n` is created only by a writer that has read entry `n − 1` (or the checkpoint at it), and only one create of `n` succeeds. | I3 |
 | D3 | **Entry `n` is a function of the log up to `n − 1` and the segments it applies.** Its positions continue the positions folded from entries `≤ n − 1`. So the state at any `seq` is `fold(checkpoint, later entries)`, the same for every reader. | D2, I10 |
@@ -294,10 +294,6 @@ not with actors × wake-ups as in v1. There is no cluster to run.
 
 ## 9. Open questions
 
-- **delta-rs application transactions:** confirm delta-rs reads and writes
-  Delta `txn` actions (I12). If not, store the materializer's offsets in a
-  CAS object per group, written after each Delta commit. Merges are
-  idempotent (I11), so a crash between the two only replays.
 - **Inventory delay:** the reconciler finds a lost newest-segment doorbell
   within a day. If that's too slow, add a weekly or daily flat LIST, or run
   the inventory more often.
