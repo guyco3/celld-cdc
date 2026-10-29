@@ -1,0 +1,28 @@
+[package]
+name = "celld-cdc"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Change data capture for celld: LTX segments to Parquet change logs and SCD1/SCD2 Delta tables."
+
+[[bin]]
+name = "celld-cdc"
+path = "src/main.rs"
+
+[dependencies]
+celld-cdc-core = { path = "../celld-cdc-core" }
+celld-cdc-parquet = { path = "../celld-cdc-parquet" }
+celld-cdc-materialize = { path = "../celld-cdc-materialize" }
+tokio.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+async-trait.workspace = true
+bytes.workspace = true
+percent-encoding.workspace = true
+futures-util = "0.3"
+clap = { version = "4", features = ["derive", "env"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+aws-config = { version = "1", features = ["behavior-version-latest"] }
+aws-sdk-sqs = "1"

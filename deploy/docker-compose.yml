@@ -1,0 +1,115 @@
+# The whole pipeline on one machine:
+#
+#   counter app ─► celld-a / celld-b ─► LocalStack S3 "celld"
+#                                           │ S3 notifications
+#                                           ▼
+#                                   SQS cdc-doorbell ─► decoder-1, decoder-2
+#                                                          │ change files
+#                                                          ▼
+#                                   S3 "celld-cdc" changes/*.parquet
+#                                           │ S3 notifications
+#                                           ▼
+#                                   SQS cdc-changes ─► materializer ─► Delta scd1 / scd2
+#
+# Build the images first: scripts/build-images.sh. Then: scripts/e2e.sh,
+# or `docker compose -f deploy/docker-compose.yml up -d`.
+
+name: celld-cdc
+
+x-aws: &aws
+  AWS_ACCESS_KEY_ID: test
+  AWS_SECRET_ACCESS_KEY: test
+  AWS_REGION: us-east-1
+
+x-celld-node: &celld-node
+  image: celld-cdc/celld:v0.6.3
+  depends_on:
+    celld-deploy:
+      condition: service_completed_successfully
+  restart: unless-stopped
+  environment:
+    <<: *aws
+    S3_ENDPOINT: http://localstack:4566
+
+x-cdc: &cdc
+  image: celld-cdc/celld-cdc:dev
+  depends_on:
+    localstack:
+      condition: service_healthy
+  restart: unless-stopped
+  environment: &cdc-env
+    <<: *aws
+    S3_ENDPOINT: http://localstack:4566
+    AWS_ENDPOINT_URL: http://localstack:4566
+    CELLD_BUCKET: s3://celld
+    CDC_BUCKET: s3://celld-cdc
+    CDC_DOORBELL_QUEUE_URL: http://localstack:4566/000000000000/cdc-doorbell
+    CDC_CHANGES_QUEUE_URL: http://localstack:4566/000000000000/cdc-changes
+    CDC_LEASE_MS: "15000"
+    RUST_LOG: info,aws_config=warn,aws_smithy_runtime=warn,deltalake=warn,datafusion=warn
+
+services:
+  localstack:
+    image: localstack/localstack:4.14
+    ports: ["127.0.0.1:4566:4566"]
+    environment:
+      SERVICES: s3,sqs
+    volumes:
+      - ./localstack/ready.d:/etc/localstack/init/ready.d:ro
+    healthcheck:
+      test: ["CMD", "test", "-f", "/tmp/celld-cdc-ready"]
+      interval: 2s
+      retries: 60
+
+  celld-deploy:
+    image: celld-cdc/celld:v0.6.3
+    depends_on:
+      localstack:
+        condition: service_healthy
+    environment:
+      <<: *aws
+      S3_ENDPOINT: http://localstack:4566
+    volumes:
+      - ../examples/counter:/app:ro
+    working_dir: /app
+    command: ["deploy", ".", "--bucket", "s3://celld"]
+
+  celld-a:
+    <<: *celld-node
+    hostname: celld-a
+    ports: ["127.0.0.1:8080:8080"]
+    command: [--bucket, s3://celld, --listen, 0.0.0.0:8080,
+              --internal-listen, 0.0.0.0:8081, --advertise, celld-a:8081]
+
+  celld-b:
+    <<: *celld-node
+    hostname: celld-b
+    ports: ["127.0.0.1:8082:8080"]
+    command: [--bucket, s3://celld, --listen, 0.0.0.0:8080,
+              --internal-listen, 0.0.0.0:8081, --advertise, celld-b:8081]
+
+  decoder-1:
+    <<: *cdc
+    hostname: decoder-1
+    command: ["decode"]
+
+  decoder-2:
+    <<: *cdc
+    hostname: decoder-2
+    command: ["decode"]
+
+  materializer:
+    <<: *cdc
+    hostname: materializer
+    command: ["materialize"]
+    environment:
+      <<: *cdc-env
+      CDC_RESCAN_SECS: "30"
+
+  sweep:
+    <<: *cdc
+    hostname: sweep
+    command: ["sweep"]
+    environment:
+      <<: *cdc-env
+      CDC_SWEEP_INTERVAL_SECS: "30"
